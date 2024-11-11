@@ -92,7 +92,9 @@ def feature_selection_pso(data, target_variable, model, n_particles=30, n_iterat
     max_no_improvement = 5  # Máximo número de iteraciones sin mejora antes de aplicar mutación
 
     for iteration in range(n_iterations):
+        print('Begin iteration num {}/{}'.format(iteration + 1, n_iterations))
         for i in range(n_particles):
+            print('Begin individual num {}/{}'.format(i + 1, n_particles))
             # Actualizar la velocidad
             r1 = np.random.rand(n_features)
             r2 = np.random.rand(n_features)
