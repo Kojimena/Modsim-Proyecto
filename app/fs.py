@@ -27,7 +27,7 @@ def iniciar_procesamiento():
     model = modelo_selector.get()
     target = target_selector.get()
 
-    message_label.config(text=f"Dataset: {os.path.basename(dataset)}, Método: {method}, Modelo: {model}, Target {target}. Procesando...")
+    message_label.config(text=f"Dataset: {os.path.basename(dataset)}, Método: {method}, Modelo: {model}, Target: {target}. Procesando...")
     message_label.pack(pady=5)
     # Ejecuta `procesar_video` en un hilo separado
     thread = threading.Thread(target=feature_selecion)
@@ -39,10 +39,10 @@ def feature_selecion():
         # Pasar el modelo seleccionado a int
         model_id = ["Decision Tree", "Random Forest", "SVM", "KNN", "LR"].index(model)
         if method == "PSO":
-            features = pso.main(dataset, target, model_id)
+            features, accuracy = pso.main(dataset, target, model_id)
         else:
             features, accuracy = ga.main(dataset, target, model_id)
-        message_label.config(text=f"Las mejores variables son: {features}\nPrecisión: {accuracy}")
+        message_label.config(text=f"Las mejores variables son: {features}\nPrecisión: {accuracy}", justify="center")
         ventana.update_idletasks()
     except Exception as e:
         messagebox.showerror("Error", str(e))

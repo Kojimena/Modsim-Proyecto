@@ -168,7 +168,9 @@ def main(csv: str, target: str, model: int) -> tuple[list[str], float]:
     response_name = target.name
 
     for i in range(max_iterations):
+        print('Begin iteration num {}/{}'.format(i + 1, max_iterations))
         for j in range(population_size):
+            print('Begin individual num {}/{}'.format(j + 1, population_size))
             accuracy[j] = _train_model(x_train, x_test, y_train, y_test, predictor_names, multiclass=True)
 
         parents = _choose_parents(population, accuracy, elite_percent)
