@@ -1,3 +1,5 @@
+from typing import List, Tuple, Any
+
 import pandas as pd
 import numpy as np
 
@@ -125,7 +127,7 @@ def _one_point_crossover(parents, elite_percent, mutation_probability, min_featu
     return crossover_population
 
 
-def main(csv: str, target: str, model: int) -> list[str]:
+def main(csv: str, target: str, model: int) -> tuple[list[str], float]:
     global DATASET, TARGET, MODEL
     DATASET = pd.read_csv(csv)
     TARGET = target
@@ -193,8 +195,11 @@ def main(csv: str, target: str, model: int) -> list[str]:
     ind_max_acc = np.argmax(accuracy)
     best_features = population[ind_max_acc, :]
 
+    print(f"Best accuracy: {best_acc_i[-1]}")
+    print(f"Best features: {predictor_names[best_features == 1].tolist()}")
+
     # Return the best features
-    return predictor_names[best_features == 1].tolist()
+    return predictor_names[best_features == 1].tolist(), float(best_acc_i[-1])
 
 
 if __name__ == "__main__":
