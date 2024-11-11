@@ -155,7 +155,7 @@ def feature_selection_pso(data, target_variable, model, n_particles=30, n_iterat
     # Imprimir resultados finales
     selected_features = X.columns[gbest == 1]
 
-    return selected_features
+    return selected_features, gbest_score
 
 
 def main(csv: str, target: str, model: int):
@@ -188,8 +188,8 @@ def main(csv: str, target: str, model: int):
     ###################################################################################################################
     
     # Ejecutar la selección de características
-    selected_features = feature_selection_pso(data, target_variable, model, n_particles, n_iterations, min_features, max_features, seed=seed)
-    return selected_features
+    selected_features, gbest_score = feature_selection_pso(data, target_variable, model, n_particles, n_iterations, min_features, max_features, seed=seed)
+    return selected_features.tolist(), gbest_score
 
 if __name__ == '__main__':
-    print(main("datasets\iris.csv", "Species", 1))
+    print(main("datasets\iris.csv", "Species", 4))
