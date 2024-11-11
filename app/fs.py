@@ -42,7 +42,9 @@ def feature_selecion():
             features, accuracy = pso.main(dataset, target, model_id)
         else:
             features, accuracy = ga.main(dataset, target, model_id)
-        message_label.config(text=f"Las mejores variables son: {features}\nPrecisión: {accuracy}", justify="center")
+        # Calcular accuracy a porcentaje
+        accuracy = round(accuracy * 100, 2)
+        message_label.config(text=f"Las mejores variables son: {features}\nPrecisión: {accuracy}%", justify="center")
         ventana.update_idletasks()
     except Exception as e:
         messagebox.showerror("Error", str(e))
@@ -87,6 +89,9 @@ if __name__ == "__main__":
     logo_label = ttk.Label(ventana, image=logo_photo)
     logo_label.pack(pady=10)
 
+    # Logo de la ventana
+    ventana.iconphoto(False, logo_photo)
+
     # Título
     titulo_label = ttk.Label(ventana, text="Sube tu dataset para descubrir las mejores variables", font=("Arial", 16))
     titulo_label.pack(pady=10)
@@ -110,7 +115,7 @@ if __name__ == "__main__":
     modelo_selector.pack(pady=5)
 
     # Combobox para seleccionar el target
-    target_label = ttk.Label(ventana, text="Selecciona el la variable objetivo", font=("Arial", 12))
+    target_label = ttk.Label(ventana, text="Selecciona la variable objetivo", font=("Arial", 12))
     target_label.pack(pady=5)
     target_selector = ttk.Combobox(ventana, values="", state="readonly", width=35)
     target_selector.set("Sube un dataset para ver las variables")
