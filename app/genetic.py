@@ -14,7 +14,7 @@ DATASET = None
 TARGET = ""
 MODEL = None
 
-def preprocess(data: pd.DataFrame) -> pd.DataFrame:
+def _preprocess(data: pd.DataFrame) -> pd.DataFrame:
     for column in data.columns:
         if data[column].dtype == 'object':
             if len(data[column].unique()) == 2:
@@ -26,7 +26,7 @@ def preprocess(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def generate_random_individuals(population_size, num_features, min_features, max_features):
+def _generate_random_individuals(population_size, num_features, min_features, max_features):
     individuals = np.zeros((population_size, num_features))
     for i in range(population_size):
         num_ones = np.random.randint(min_features, max_features+1)
@@ -35,7 +35,7 @@ def generate_random_individuals(population_size, num_features, min_features, max
     return individuals
 
 
-def train_model(x_train, x_test, y_train, y_test, predictor_names, multiclass=False):
+def _train_model(x_train, x_test, y_train, y_test, predictor_names, multiclass=False):
     x_train = x_train.loc[:, predictor_names]
     x_test = x_test.loc[:, predictor_names]
 
@@ -52,7 +52,7 @@ def train_model(x_train, x_test, y_train, y_test, predictor_names, multiclass=Fa
     return prec
 
 
-def choose_parents(population, accuracy, elite_percent):
+def _choose_parents(population, accuracy, elite_percent):
     # Get elite of top 2 which doesn't mutate
     elite_num = int(round(((elite_percent * population.shape[0]) // 2) * 2))
     ind_ac = np.argsort(-accuracy)
@@ -77,7 +77,7 @@ def choose_parents(population, accuracy, elite_percent):
     return parents
 
 
-def one_point_crossover(parents, elite_percent, mutation_probability, min_features, max_features, population):
+def _one_point_crossover(parents, elite_percent, mutation_probability, min_features, max_features, population):
     elite_num = int(round(((elite_percent * population.shape[0]) // 2) * 2))
     crossover_population = np.zeros((parents.shape[0], parents.shape[1]))  # first two are elite
     crossover_population[0:elite_num, :] = parents[0:elite_num, :]
@@ -137,7 +137,7 @@ def main(csv: str, target: str, model: int):
     elif model == 3:
         MODEL = KNeighborsClassifier()
 
-    DATASET = preprocess(DATASET)
+    DATASET = _preprocess(DATASET)
 
     target = DATASET[TARGET]
     predictors = DATASET.drop(TARGET, axis=1)
@@ -155,16 +155,16 @@ def main(csv: str, target: str, model: int):
 
     x_train, x_test, y_train, y_test = train_test_split(predictors, target, test_size=0.2, random_state=42)
 
-    population = generate_random_individuals(population_size, num_features, min_features, max_features)
+    population = _generate_random_individuals(population_size, num_features, min_features, max_features)
     accuracy = np.zeros(population_size)
     response_name = target.name
 
     for i in range(max_iterations):
         for j in range(population_size):
-            accuracy[j] = train_model(x_train, x_test, y_train, y_test, predictor_names, multiclass=True)
+            accuracy[j] = _train_model(x_train, x_test, y_train, y_test, predictor_names, multiclass=True)
 
-        parents = choose_parents(population, accuracy, elite_percent)
-        population = one_point_crossover(parents, elite_percent, mutation_probability, min_features, max_features, population)
+        parents = _choose_parents(population, accuracy, elite_percent)
+        population = _one_point_crossover(parents, elite_percent, mutation_probability, min_features, max_features, population)
 
     gen = 0
     best_acc_i = np.zeros(max_iterations)
@@ -175,12 +175,12 @@ def main(csv: str, target: str, model: int):
     while gen < max_iterations - 1:
         print('Begin iteration num {}/{}'.format(gen + 2, max_iterations))
         gen += 1
-        parents = choose_parents(population, accuracy, elite_percent)
-        children = one_point_crossover(parents, elite_percent, mutation_probability, min_features, max_features, population)
+        parents = _choose_parents(population, accuracy, elite_percent)
+        children = _one_point_crossover(parents, elite_percent, mutation_probability, min_features, max_features, population)
         population = children
         for ind in range(population_size):
             predictor_names_ind = predictor_names[population[ind, :] == 1]
-            accuracy_ind = train_model(x_train, x_test, y_train, y_test, predictor_names_ind, multiclass=is_multiclass)
+            accuracy_ind = _train_model(x_train, x_test, y_train, y_test, predictor_names_ind, multiclass=is_multiclass)
             accuracy[ind] = accuracy_ind
         best_acc_i[gen] = max(accuracy)
 
