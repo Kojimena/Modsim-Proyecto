@@ -8,6 +8,8 @@ from sklearn.metrics import precision_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+
 from sklearn.preprocessing import LabelEncoder
 
 DATASET = None
@@ -123,7 +125,7 @@ def _one_point_crossover(parents, elite_percent, mutation_probability, min_featu
     return crossover_population
 
 
-def main(csv: str, target: str, model: int):
+def main(csv: str, target: str, model: int) -> list[str]:
     global DATASET, TARGET, MODEL
     DATASET = pd.read_csv(csv)
     TARGET = target
@@ -136,6 +138,10 @@ def main(csv: str, target: str, model: int):
         MODEL = SVC()
     elif model == 3:
         MODEL = KNeighborsClassifier()
+    elif model == 4:
+        MODEL = LogisticRegression()
+    else:
+        return ["Invalid model"]
 
     DATASET = _preprocess(DATASET)
 
